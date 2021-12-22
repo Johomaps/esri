@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>
+    EasyPlayer
+  </title>
+  <!-- <link rel="icon" href="./favicon.ico"> -->
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="renderer" content="webkit"/>
+  <meta name="force-rendering" content="webkit"/>
+  <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+</head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+</style>
+
+<body>
+<div id="playerContainer">
+  <!--  <easy-player id="player" video-title="视频测试标题" show-custom-button="true" resolution="yh,fhd,hd,sd" player-style="width: 100%;height: 94vh"></easy-player>-->
+  <div style="width: 100%;height: 94vh">
+    <easy-player id="player"
+                 video-title="视频测试标题"
+                 show-custom-button="true"
+    ></easy-player>
+  </div>
+</div>
+<div style="padding: 8px;z-index: 999">
+  <div style="padding: 5px;display: flex;flex-direction: row;justify-content: space-between;align-items: center;flex:1">
+    <div>
+      流地址：
+      <input style="width: 800px" id="streamUrl"
+             value="https://vstream.digital-g.tech/flv/hls/stream_1_0.flv"/>
+    </div>
+    <div>
+      <button id="testBtn" style="margin-right: 50px">测试按钮</button>
+
+      <button id="btn">播放</button>
+    </div>
+  </div>
+</div>
+
+<!-- vue 方式-->
+
+<script>
+  let isFirstPlay = true
+  const btn = document.getElementById('btn')
+  let player = document.getElementById('player')
+  let vuePlayer = null
+  const testBtn = document.getElementById('testBtn')
+
+  //dss 测试分辨率切换 http://demo.easydss.com:10086/fvod/qxZWoAtng/video.m3u8
+  //flv http://demo.easydss.com:10086/flv/live/ar1.flv
+  //H265 http://192.168.99.251:10800/flv/live/stream_10.flv
+
+  btn.onclick = () => {
+    if (!isFirstPlay) return reloadStream();
+    isFirstPlay = false
+    let streamUrl = document.getElementById('streamUrl').value || null
+    player.setAttribute('live', true)
+    if (streamUrl === null) player.setAttribute('video-url', 'https://vstream.digital-g.tech/flv/hls/stream_3_0.flv')
+    else player.setAttribute('video-url', streamUrl);
+
+    vuePlayer = player.getVueInstance()
+
+    console.log("vuePlayer = ", vuePlayer)
+
+    //视频加载异常时 重新初始化播放器
+    player.addEventListener("error", () => {
+      console.info("error")
+      reloadStream()
+    })
+    player.addEventListener("message", () => {
+      console.info("message")
+      reloadStream()
+    })
+    player.addEventListener("ended", () => {
+      console.info("ended")
+      reloadStream('ended')
+    })
+  }
+  testBtn.onclick = () => {
+    const vuePlayer = player.getVueInstance()
+    console.log("vuePlayer = ", vuePlayer)
+    const {isStreamH265} = vuePlayer
+    if (!isStreamH265) vuePlayer.saveLocalSnapshot()
+  }
+
+  function reloadStream(type) {
+    if (type === 'ended') return vuePlayer.replay()
+    vuePlayer.initPlayer()
+  }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Johomaps/esri/EasyPlayer-element2.min.js"></script></body>
+
+</html>
