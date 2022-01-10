@@ -1,0 +1,67 @@
+<html>
+
+<head>
+<style>
+body {
+      margin: 0; height: 100%; 
+      overflow: hidden
+}
+iframe { 
+	overflow-x: hidden; 
+	overflow-y: hidden; 
+        border: 0;
+}
+.refresh {
+  background-color: #445696;
+  position: absolute;
+  color: white;
+  border: 2px solid black;
+  margin: none;
+  padding: 10px;
+  top: 84%;
+  width: 100%;
+  height: 6%;
+}
+.CamID {
+  position: absolute;
+  color: white;
+  font-size: 11px;
+  margin: none;
+  padding: 1px;
+  top: 0%;
+  width: 10%;
+  height: 4%;
+}
+</style>
+
+<script type="text/javascript">
+    myVid=document.getElementById("video1");
+    myVid.muted=true;
+</script>
+
+</head>
+
+<body>
+<div>
+
+<div class="refresh">
+<button onClick="window.location.reload();">Refresh</button>
+</div>
+
+<div class="CamID">
+<p id="camwin"></p>
+</div>
+
+<iframe id="vid" src="https://gammoneye-web.test.gammonconstruction.com/?eye=61ba091e03689d4f82d36aa4" scrolling="no" width="520" height="328" allowfullscreen allow="autoplay" ></iframe>
+</div>
+
+
+
+<script type="text/javascript">
+var url = window.location.href.split("?");
+document.getElementById("camwin").innerHTML = "URL: " + 'https://gammoneye-web.test.gammonconstruction.com/?eye=' + url[1] ;
+document.getElementById('vid').src = 'https://gammoneye-web.test.gammonconstruction.com/?eye=' + url[1];
+</script>
+
+</body>
+</html>
