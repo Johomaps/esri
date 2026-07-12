@@ -412,6 +412,32 @@
                 closePopup();
             }
         });
+		
+		
+	// Sync top and bottom scrollbars
+	const topScrollbar = document.getElementById('topScrollbarWrapper');
+	const tableScrollbar = document.getElementById('tableWrapper');
+
+	let isSyncingTopScroll = false;
+	let isSyncingTableScroll = false;
+
+	// When you scroll the top bar, update the table position
+	topScrollbar.onscroll = function() {
+    	if (!isSyncingTopScroll) {
+        	isSyncingTableScroll = true;
+        	tableScrollbar.scrollLeft = topScrollbar.scrollLeft;
+    	}
+    	isSyncingTopScroll = false;
+	};
+
+	// When you scroll the table, update the top bar position
+	tableScrollbar.onscroll = function() {
+    	if (!isSyncingTableScroll) {
+        	isSyncingTopScroll = true;
+        	topScrollbar.scrollLeft = tableScrollbar.scrollLeft;
+    	}
+    	isSyncingTableScroll = false;
+	};	
     </script>
 </body>
 </html>
