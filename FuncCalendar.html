@@ -184,6 +184,12 @@
         <button class="panel-btn import-btn" onclick="document.getElementById('fileInput').click()">Load Grid from File</button>
         <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="loadDataFromFile(event)">
     </div>
+	
+	<!-- NEW: Invisible wrapper to hold the top scrollbar -->
+    <div id="topScrollbarWrapper" style="overflow-x: auto; overflow-y: hidden; max-width: 95vw; margin: 0 auto; height: 20px;">
+        <!-- This dummy div is forced to match your table's exact 2300px width -->
+        <div style="width: 2300px; height: 1px;"></div>
+    </div>
 
     <div style="overflow-x: auto; max-width: 100%; border: 1px solid #ccc;">
         <table id="gridTable">
