@@ -251,6 +251,24 @@
             tableBody.appendChild(tr);
         }
 
+        window.addEventListener('DOMContentLoaded', () => {
+            fetch('grid-data.json') 
+                .then(response => {
+                    if (!response.ok) throw new Error("File not found");
+                    return response.json();
+                })
+                .then(parsedData => {
+                    runtimeGridData = parsedData; 
+                    applyDataToGrid(runtimeGridData);
+                    console.log("Data loaded automatically!");
+                })
+                .catch(error => {
+                    console.log("No initial data file found, starting with a clean grid:", error);
+                });
+        });
+
+
+
         // Logic for Handling Popups
         let activeContentDiv = null; 
         let activeCellTd = null;
