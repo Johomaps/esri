@@ -251,33 +251,6 @@
             tableBody.appendChild(tr);
         }
 		
-		
-		
-		window.addEventListener('DOMContentLoaded', () => {
-    		const savedData = localStorage.getItem('grid-data2-autosave');
-    
-    		if (savedData) {
-    		    runtimeGridData = JSON.parse(savedData);
-        		applyDataToGrid(runtimeGridData);
-        		console.log("Data restored from background auto-save!");
-    		} else {
-        		// Fallback to fetching the file if no local cache exists
-        		fetch('grid-data2.json')
-            		.then(response => response.json())
-            		.then(parsedData => {
-                		runtimeGridData = parsedData;
-                		applyDataToGrid(runtimeGridData);
-            		})
-            		.catch(err => console.log("Starting with a clean grid."));
-    		}
-		});
-		
-		
-		setInterval(() => {
-            localStorage.setItem('grid-data2-autosave', JSON.stringify(runtimeGridData));
-            console.log('Grid auto-saved to browser storage at ' + new Date().toLocaleTimeString());
-        }, 30000); // 30000 milliseconds = 30 seconds
-
 
 
         // Logic for Handling Popups
@@ -372,18 +345,33 @@
 		
 		
 		
-		
 
         // Generates and downloads a local text file containing the JSON string
         function saveDataToFile() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(runtimeGridData, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "grid-data2.json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
+        // 1. Prepare your data object
+        const payload = {
+            filename: "grid-data2.json",
+            data: runtimeGridData
+        };
+
+        // 2. POST it to your backend script
+        fetch('save.php', { // or 'http://localhost:3000/save' if using Node.js
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.success) {
+                console.log("File saved successfully on the server!");
+            } else {
+            console.error("Server failed to save file:", result.error);
+            }
+        })
+        .catch(error => console.error("Network error:", error));
+}
 
         // Reads a selected local text file and paints the states onto the active DOM grid
         function loadDataFromFile(event) {
@@ -440,6 +428,8 @@
             }
         });
 		
+		
     </script>
+	
 </body>
 </html>
