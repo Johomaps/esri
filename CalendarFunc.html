@@ -275,7 +275,7 @@
         }
 
         // Replace this URL with your actual deployed Google Script Web App URL
-          var webAppUrl = 'https://script.google.com/macros/s/AKfycb..._YOUR_WEB_APP_URL.../exec';
+          var webAppUrl = 'https://script.google.com/macros/s/AKfycbw0hWTKQgC2RuvdCdcPKwVegepSW8XoANWhNN0QpdA/dev';
   
         window.addEventListener('DOMContentLoaded', () => {
             fetch('grid-data.json') 
@@ -455,45 +455,6 @@
       .uploadDataToDriveServer(jsonString); // Calls Code.gs
   }
   
-  
-  
-  // This is the function the HTML is calling
-function uploadDataToDriveServer(jsonString) {
-  try {
-    const folderId = "1325PX3orIpz8dwVKznFx0Kldi6uo-BcF";
-    const folder = DriveApp.getFolderById(folderId);
-    const fileName = "grid-data.json";
-    
-    // 1. Search the folder for any existing files matching the name
-    const files = folder.getFilesByName(fileName);
-    let file;
-    
-    if (files.hasNext()) {
-      // 2. If a file exists, select it and update its content
-      file = files.next();
-      file.setContent(jsonString);
-      
-      // Clean up extra duplicates if any happened to sneak in previously
-      while (files.hasNext()) {
-        const duplicate = files.next();
-        duplicate.setTrashed(true); 
-      }
-      
-      return "File updated successfully!";
-    } else {
-      // 3. If no file exists yet, create a new one
-      file = folder.createFile(fileName, jsonString, MimeType.PLAIN_TEXT);
-      return "New file created successfully!";
-    }
-    
-  } catch (error) {
-    Logger.log("Error updating file: " + error.toString());
-    throw new Error(error.toString());
-  }
-}
-
-
-
 </script>
 
 </body>
