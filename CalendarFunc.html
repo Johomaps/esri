@@ -184,7 +184,11 @@
 	<h2>BN-GIS FUNCTIONS Calender</h2>
     <p>Biweekly Sprints for Functions</p>
 	
-        <button class="panel-btn export-btn" onclick="saveDataToDrive()">Save</button>
+<!-- Optional: A small text element to visually show you when it last saved -->
+<p id="save-status" style="color: gray; font-style: italic;">Status: Waiting for first auto-save...</p>
+
+
+
         <button class="panel-btn import-btn" onclick="document.getElementById('fileInput').click()">Load</button>
         <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="loadDataFromFile(event)">
     </div>
@@ -350,27 +354,6 @@
         }
 
 
-
-        // Generates and download containing the JSON string to Google Drive 
-         function saveDataToDrive() {
-          // Your data object (similar to your runtimeGridData)
-          const runtimeGridData = { status: "success", timestamp: new Date() };
-  
-          // Convert it to a formatted JSON string
-          const jsonString = JSON.stringify(runtimeGridData, null, 2);
-  
-          // Find your specific folder by its ID (found in the folder's URL)
-          const folderId = "1325PX3orIpz8dwVKznFx0Kldi6uo-BcF";
-          const folder = DriveApp.getFolderById(folderId);
-  
-          // Create the file directly in that folder
-          const fileName = "grid-data.json";
-          folder.createFile(fileName, jsonString, MimeType.PLAIN_TEXT);
-  
-          Logger.log("Saved directly to Google Drive!");
-        }
-		
-
         // Reads a selected local text file and paints the states onto the active DOM grid
         function loadDataFromFile(event) {
             const file = event.target.files[0];
@@ -426,5 +409,49 @@
             }
         });
     </script>
+	
+	
+
+
+<script>
+  // This event listener waits until the webpage fully loads, then kicks off the timer
+  document.addEventListener('DOMContentLoaded', function() {
+    // 30,000 milliseconds = 30 seconds
+    setInterval(autoSaveData, 30000); 
+    
+    console.log("Auto-save timer started: Saving every 30 seconds.");
+  });
+
+  function autoSaveData() {
+
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(runtimeGridData, null, 2));
+        const downloadAnchor = document.createElement('a');
+        //downloadAnchor.setAttribute("href", dataStr);
+        //downloadAnchor.setAttribute("download", "grid-data.json");
+        //document.body.appendChild(downloadAnchor);
+        //downloadAnchor.click();
+        //downloadAnchor.remove();
+
+    // 2. Convert it to a formatted JSON string
+    const jsonString = JSON.stringify(runtimeGridData, null, 2);
+    
+    // Update status text on screen so you know it's trying to save
+    document.getElementById("save-status").innerText = "Saving data to Google Drive...";
+
+    // 3. Send it to the server side using google.script.run
+    google.script.run
+      .withSuccessHandler(function(response) {
+         const timestamp = new Date().toLocaleTimeString();
+         document.getElementById("save-status").innerText = "Last auto-saved at: " + timestamp;
+         console.log("Auto-save successful:", response);
+      })
+      .withFailureHandler(function(error) {
+         document.getElementById("save-status").innerText = "Auto-save failed! Check console.";
+         console.error("Auto-save failed:", error);
+      })
+      .uploadDataToDriveServer(jsonString); // Calls Code.gs
+  }
+</script>
+
 </body>
 </html>
